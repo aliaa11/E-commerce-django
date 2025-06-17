@@ -1,0 +1,132 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="product-detail-container">
+    <nav aria-label="breadcrumb" class="breadcrumb-nav">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{% url 'products:product_list' %}" class="text-pink-600 hover:text-pink-800">Products</a></li>
+            <li class="breadcrumb-item active" aria-current="page">{{ product.name }}</li>
+        </ol>
+    </nav>
+
+    <div class="product-detail-grid">
+        <!-- Product Image Gallery -->
+        <div class="product-gallery">
+            <div class="main-image-container">
+                {% if product.image %}
+                <img src="{{ product.image.url }}" class="main-image" alt="{{ product.name }}">
+                {% else %}
+                <img src="https://via.placeholder.com/800" class="main-image" alt="placeholder">
+                {% endif %}
+                <div class="image-badge">
+                    {% if product.stock > 0 %}
+                    <span class="badge bg-pink-100 text-pink-800">In Stock</span>
+                    {% else %}
+                    <span class="badge bg-gray-200 text-gray-700">Out of Stock</span>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Product Details -->
+        <div class="product-info">
+            <h1 class="product-title">{{ product.name }}</h1>
+            
+            <div class="price-section">
+                <span class="current-price">${{ product.price }}</span>
+                {% if product.old_price %}
+                <span class="old-price">${{ product.old_price }}</span>
+                {% endif %}
+            </div>
+
+            <div class="rating-section">
+                <div class="stars">
+                    <span class="star filled">★</span>
+                    <span class="star filled">★</span>
+                    <span class="star filled">★</span>
+                    <span class="star filled">★</span>
+                    <span class="star">★</span>
+                </div>
+                <span class="review-count">(24 reviews)</span>
+                {% if product.stock > 0 %}
+                <span class="stock-status text-pink-600">{{ product.stock }} items left</span>
+                {% endif %}
+            </div>
+
+            <p class="product-description">{{ product.description }}</p>
+
+            {% if product.stock > 0 %}
+            <form method="post" action="{% url 'cart:add-to-cart' product.id %}" class="add-to-cart-form">
+                {% csrf_token %}
+                <input type="hidden" name="product_id" value="{{ product.id }}">
+                <div class="quantity-selector">
+                    <label for="quantity">Quantity:</label>
+                    <div class="quantity-input">
+                        <button type="button" class="quantity-btn minus">-</button>
+                        <input type="number" id="quantity" name="quantity" value="1" min="1" max="{{ product.stock }}">
+                        <button type="button" class="quantity-btn plus">+</button>
+                    </div>
+                </div>
+                <button type="submit" class="add-to-cart-btn">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="cart-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="9" cy="21" r="1"></circle>
+                        <circle cx="20" cy="21" r="1"></circle>
+                        <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
+                    </svg>
+                    Add to Cart
+                </button>
+            </form>
+            {% else %}
+            <div class="out-of-stock">
+                <span class="badge">Out of Stock</span>
+                <button class="notify-me-btn">Notify Me When Available</button>
+            </div>
+            {% endif %}
+
+            <!-- Product Features -->
+            <div class="features-card">
+                <h3 class="features-title">Product Features</h3>
+                <ul class="features-list">
+                    {% if product.features %}
+                        {% for feature in product.features %}
+                        <li>
+                            <svg xmlns="http://www.w3.org/2000/svg" class="feature-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <polyline points="20 6 9 17 4 12"></polyline>
+                            </svg>
+                            {{ feature }}
+                        </li>
+                        {% endfor %}
+                    {% else %}
+                        <li class="no-features">No features listed</li>
+                    {% endif %}
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- Related Products -->
+    {% if related_products %}
+    <div class="related-products">
+        <h3 class="section-title">You May Also Like</h3>
+        <div class="related-grid">
+            {% for related in related_products %}
+            <div class="related-card">
+                <div class="related-image-container">
+                    {% if related.image %}
+                    <img src="{{ related.image.url }}" class="related-image" alt="{{ related.name }}">
+                    {% else %}
+                    <img src="https://via.placeholder.com/300" class="related-image" alt="placeholder">
+                    {% endif %}
+                    <button class="quick-view-btn">Quick View</button>
+                </div>
+                <div class="related-info">
+                    <h4 class="related-name">{{ related.name }}</h4>
+                    <div class="related-price">${{ related.price }}</div>
+                    <a href="{% url 'products:product_detail' related.slug %}" class="view-details-btn">View Details</a>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+</div>
+{% endblock content %}

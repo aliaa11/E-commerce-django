@@ -1,0 +1,255 @@
+{% extends 'base.html' %}
+
+{% block extra_css %}
+<style>
+    .orders-container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 2rem 1.5rem;
+    }
+
+    .breadcrumb-nav {
+        margin-bottom: 2rem;
+    }
+
+    .breadcrumb {
+        background-color: transparent;
+        padding: 0;
+        display: flex;
+        flex-wrap: wrap;
+    }
+
+    .breadcrumb-item {
+        font-size: 0.875rem;
+    }
+
+    .breadcrumb-item a {
+        color: #ec4899;
+        text-decoration: none;
+        transition: color 0.2s ease;
+    }
+
+    .breadcrumb-item a:hover {
+        color: #be185d;
+        text-decoration: underline;
+    }
+
+    .breadcrumb-item.active {
+        color: #be185d;
+        font-weight: 500;
+    }
+
+    .page-title {
+        font-size: 1.75rem;
+        font-weight: 700;
+        color: #111827;
+        margin-bottom: 1.5rem;
+    }
+
+    .order-card {
+        background-color: white;
+        border-radius: 0.5rem;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        border: none;
+        margin-bottom: 1rem;
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .order-card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    .card-body {
+        padding: 1.5rem;
+    }
+
+    .order-header {
+        margin-bottom: 0.5rem;
+    }
+
+    .order-number {
+        font-size: 1rem;
+        font-weight: 600;
+        color: #111827;
+        margin-bottom: 0.25rem;
+    }
+
+    .order-date {
+        font-size: 0.875rem;
+        color: #6b7280;
+    }
+
+    .status-badge {
+        display: inline-block;
+        padding: 0.35rem 0.75rem;
+        border-radius: 9999px;
+        font-size: 0.75rem;
+        font-weight: 600;
+        text-transform: uppercase;
+    }
+
+    .status-pending {
+        background-color: #fef3c7;
+        color: #92400e;
+    }
+
+    .status-completed {
+        background-color: #d1fae5;
+        color: #065f46;
+    }
+
+    .status-cancelled {
+        background-color: #fee2e2;
+        color: #991b1b;
+    }
+
+    .total-label {
+        font-size: 0.875rem;
+        color: #6b7280;
+        margin-bottom: 0.25rem;
+    }
+
+    .total-amount {
+        font-size: 1.125rem;
+        font-weight: 700;
+        color: #ec4899;
+    }
+
+    .details-btn {
+        background-color: transparent;
+        color: #ec4899;
+        border: 1px solid #ec4899;
+        border-radius: 0.375rem;
+        padding: 0.5rem 1rem;
+        font-weight: 500;
+        transition: all 0.2s ease;
+        text-decoration: none;
+        display: inline-block;
+    }
+
+    .details-btn:hover {
+        background-color: #ec4899;
+        color: white;
+        transform: translateY(-1px);
+    }
+
+    .empty-state {
+        text-align: center;
+        padding: 3rem 1rem;
+    }
+
+    .empty-icon {
+        font-size: 3rem;
+        color: #d1d5db;
+        margin-bottom: 1rem;
+    }
+
+    .empty-title {
+        font-size: 1.25rem;
+        font-weight: 600;
+        color: #111827;
+        margin-bottom: 0.5rem;
+    }
+
+    .empty-text {
+        color: #6b7280;
+        margin-bottom: 1.5rem;
+    }
+
+    .shopping-btn {
+        background-color: #ec4899;
+        color: white;
+        border: none;
+        border-radius: 0.375rem;
+        padding: 0.75rem 1.5rem;
+        font-weight: 500;
+        transition: all 0.2s ease;
+        text-decoration: none;
+        display: inline-block;
+    }
+
+    .shopping-btn:hover {
+        background-color: #db2777;
+        transform: translateY(-1px);
+    }
+
+    @media (max-width: 768px) {
+        .order-card {
+            text-align: center;
+        }
+        
+        .order-meta {
+            margin-bottom: 1rem;
+        }
+        
+        .details-btn {
+            width: 100%;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="orders-container">
+    <nav aria-label="breadcrumb" class="breadcrumb-nav">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{% url 'products:product_list' %}">Products</a></li>
+            <li class="breadcrumb-item active">My Orders</li>
+        </ol>
+    </nav>
+
+    <h1 class="page-title">My Orders</h1>
+    
+    {% if orders %}
+    <div class="orders-list">
+        {% for order in orders %}
+        <div class="order-card">
+            <div class="card-body">
+                <div class="row align-items-center">
+                    <div class="col-md-3 order-meta">
+                        <div class="order-header">
+                            <h3 class="order-number">Order #{{ order.id }}</h3>
+                            <p class="order-date">{{ order.created_at|date:"M d, Y" }}</p>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-3 order-meta">
+                        <span class="status-badge status-{{ order.status }}">
+                            {{ order.status|title }}
+                        </span>
+                    </div>
+                    
+                    <div class="col-md-3 order-meta">
+                        <p class="total-label">Total Amount</p>
+                        <p class="total-amount">${{ order.total }}</p>
+                    </div>
+                    
+                    <div class="col-md-3 text-md-end">
+                        <a href="{% url 'orders:order_detail' order.id %}" class="details-btn">
+                            View Details
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="empty-state">
+        <div class="empty-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="10" cy="20.5" r="1"></circle>
+                <circle cx="18" cy="20.5" r="1"></circle>
+                <path d="M2.5 2.5h3l2.7 12.4a2 2 0 0 0 2 1.6h7.7a2 2 0 0 0 2-1.6l1.6-8.4H7.1"></path>
+            </svg>
+        </div>
+        <h3 class="empty-title">No orders yet</h3>
+        <p class="empty-text">You haven't placed any orders yet.</p>
+        <a href="{% url 'products:product_list' %}" class="shopping-btn">
+            Start Shopping
+        </a>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

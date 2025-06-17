@@ -1,0 +1,203 @@
+{% extends 'base.html' %}
+
+{% block extra_css %}
+<style>
+    .register-container {
+        background-color: #fdf2f8;
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        padding: 2rem 0;
+    }
+
+    .register-card {
+        border-radius: 1rem;
+        border: none;
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+        overflow: hidden;
+    }
+
+    .register-header {
+        background-color: #fce7f3;
+        padding: 2rem;
+        text-align: center;
+    }
+
+    .register-title {
+        color: #831843;
+        font-weight: 700;
+        margin-bottom: 0.5rem;
+    }
+
+    .register-subtitle {
+        color: #9d174d;
+        font-size: 1rem;
+    }
+
+    .register-body {
+        padding: 2.5rem;
+        background-color: white;
+    }
+
+    .form-floating label {
+        color: #6b7280;
+    }
+
+    .form-control {
+        border: 1px solid #f3f4f6;
+        padding: 1rem;
+        border-radius: 0.5rem;
+        transition: all 0.3s ease;
+    }
+
+    .form-control:focus {
+        border-color: #ec4899;
+        box-shadow: 0 0 0 0.25rem rgba(236, 72, 153, 0.15);
+    }
+
+    .is-invalid {
+        border-color: #ef4444;
+    }
+
+    .is-invalid:focus {
+        box-shadow: 0 0 0 0.25rem rgba(239, 68, 68, 0.25);
+    }
+
+    .invalid-feedback {
+        color: #ef4444;
+        font-size: 0.875rem;
+        margin-top: 0.25rem;
+    }
+
+    .alert-danger {
+        background-color: #fee2e2;
+        border-color: #fecaca;
+        color: #991b1b;
+        border-radius: 0.5rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .btn-register {
+        background-color: #ec4899;
+        border: none;
+        padding: 1rem;
+        font-weight: 600;
+        border-radius: 0.5rem;
+        transition: all 0.3s ease;
+    }
+
+    .btn-register:hover {
+        background-color: #db2777;
+        transform: translateY(-2px);
+    }
+
+    .login-link {
+        color: #ec4899;
+        font-weight: 600;
+        text-decoration: none;
+        transition: color 0.3s ease;
+    }
+
+    .login-link:hover {
+        color: #be185d;
+        text-decoration: underline;
+    }
+
+    .form-floating>.form-control:not(:placeholder-shown)~label {
+        color: #9d174d;
+    }
+
+    .form-floating>.form-control:focus~label {
+        color: #9d174d;
+    }
+
+    @media (max-width: 768px) {
+        .register-body {
+            padding: 1.5rem;
+        }
+        
+        .register-header {
+            padding: 1.5rem;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="register-container">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-8 col-lg-6">
+                <div class="register-card">
+                    <div class="register-header">
+                        <h2 class="register-title">Create Account</h2>
+                        <p class="register-subtitle">Join our community today</p>
+                    </div>
+                    
+                    <div class="register-body">
+                        <form method="post" novalidate>
+                            {% csrf_token %}
+                            
+                            {% if form.errors %}
+                            <div class="alert alert-danger">
+                                Please correct the errors below.
+                            </div>
+                            {% endif %}
+
+                            <div class="form-floating mb-3">
+                                <input type="text" name="username" class="form-control {% if form.username.errors %}is-invalid{% endif %}" 
+                                       id="username" placeholder="Username" required>
+                                <label for="username">Username</label>
+                                {% if form.username.errors %}
+                                <div class="invalid-feedback">{{ form.username.errors.0 }}</div>
+                                {% endif %}
+                            </div>
+
+                            <div class="form-floating mb-3">
+                                <input type="email" name="email" class="form-control {% if form.email.errors %}is-invalid{% endif %}" 
+                                       id="email" placeholder="Email" required>
+                                <label for="email">Email</label>
+                                {% if form.email.errors %}
+                                <div class="invalid-feedback">{{ form.email.errors.0 }}</div>
+                                {% endif %}
+                            </div>
+
+                            <div class="form-floating mb-3">
+                                <input type="password" name="password1" class="form-control {% if form.password1.errors %}is-invalid{% endif %}" 
+                                       id="password1" placeholder="Password" required>
+                                <label for="password1">Password</label>
+                                {% if form.password1.errors %}
+                                <div class="invalid-feedback">{{ form.password1.errors.0 }}</div>
+                                {% endif %}
+                            </div>
+
+                            <div class="form-floating mb-4">
+                                <input type="password" name="password2" class="form-control {% if form.password2.errors %}is-invalid{% endif %}" 
+                                       id="password2" placeholder="Confirm Password" required>
+                                <label for="password2">Confirm Password</label>
+                                {% if form.password2.errors %}
+                                <div class="invalid-feedback">{{ form.password2.errors.0 }}</div>
+                                {% endif %}
+                            </div>
+
+                            <div class="d-grid mb-4">
+                                <button type="submit" class="btn btn-register py-3">
+                                    Register
+                                </button>
+                            </div>
+
+                            <div class="text-center">
+                                <p class="mb-0">Already have an account? 
+                                    <a href="{% url 'accounts:login' %}" class="login-link">
+                                        Login here
+                                    </a>
+                                </p>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

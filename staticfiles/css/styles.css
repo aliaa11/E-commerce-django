@@ -1,0 +1,50 @@
+:root {
+    --primary-color: #3498db;
+    --secondary-color: #2ecc71;
+    --dark-color: #2c3e50;
+    --light-color: #f8f9fa;
+    --danger-color: #e74c3c;
+    --success-color: #27ae60;
+}
+
+body {
+    font-family: 'Roboto', sans-serif;
+    background-color: var(--light-color);
+}
+
+.navbar {
+    box-shadow: 0 2px 4px rgba(0,0,0,.08);
+    background-color: white;
+}
+
+.card {
+    border: none;
+    box-shadow: 0 0.125rem 0.25rem rgba(0,0,0,.075);
+    transition: transform 0.2s;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+}
+
+.btn-primary {
+    background-color: var(--primary-color);
+    border-color: var(--primary-color);
+}
+
+.btn-primary:hover {
+    background-color: #2980b9;
+    border-color: #2980b9;
+}
+
+.messages {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 1050;
+    min-width: 300px;
+}
+
+.alert {
+    box-shadow: 0 0.125rem 0.25rem rgba(0,0,0,.075);
+}

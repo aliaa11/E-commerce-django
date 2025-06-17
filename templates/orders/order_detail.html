@@ -1,0 +1,249 @@
+{% extends 'base.html' %}
+
+{% block extra_css %}
+<style>
+    .order-detail-container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 2rem 1.5rem;
+    }
+
+    .breadcrumb-nav {
+        margin-bottom: 2rem;
+    }
+
+    .breadcrumb {
+        background-color: transparent;
+        padding: 0;
+        display: flex;
+        flex-wrap: wrap;
+    }
+
+    .breadcrumb-item {
+        font-size: 0.875rem;
+    }
+
+    .breadcrumb-item a {
+        color: #ec4899;
+        text-decoration: none;
+        transition: color 0.2s ease;
+    }
+
+    .breadcrumb-item a:hover {
+        color: #be185d;
+        text-decoration: underline;
+    }
+
+    .breadcrumb-item.active {
+        color: #be185d;
+        font-weight: 500;
+    }
+
+    .order-card {
+        background-color: white;
+        border-radius: 0.5rem;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        border: none;
+        margin-bottom: 1.5rem;
+    }
+
+    .card-header {
+        padding: 1.25rem 1.5rem;
+        border-bottom: 1px solid #f3f4f6;
+    }
+
+    .card-title {
+        font-size: 1.25rem;
+        font-weight: 600;
+        color: #111827;
+        margin: 0;
+    }
+
+    .card-body {
+        padding: 1.5rem;
+    }
+
+    .order-item {
+        display: grid;
+        grid-template-columns: 80px 1fr auto;
+        gap: 1.5rem;
+        align-items: center;
+        padding: 1rem 0;
+    }
+
+    .order-item:not(:last-child) {
+        border-bottom: 1px solid #f3f4f6;
+    }
+
+    .product-image {
+        width: 80px;
+        height: 80px;
+        object-fit: cover;
+        border-radius: 0.25rem;
+    }
+
+    .product-name {
+        font-weight: 600;
+        margin-bottom: 0.25rem;
+        color: #111827;
+    }
+
+    .product-meta {
+        font-size: 0.875rem;
+        color: #6b7280;
+    }
+
+    .product-total {
+        font-weight: 600;
+        text-align: right;
+    }
+
+    .status-badge {
+        display: inline-block;
+        padding: 0.35rem 0.75rem;
+        border-radius: 9999px;
+        font-size: 0.75rem;
+        font-weight: 600;
+        text-transform: uppercase;
+    }
+
+    .status-pending {
+        background-color: #fef3c7;
+        color: #92400e;
+    }
+
+    .status-completed {
+        background-color: #d1fae5;
+        color: #065f46;
+    }
+
+    .status-cancelled {
+        background-color: #fee2e2;
+        color: #991b1b;
+    }
+
+    .summary-title {
+        font-size: 1rem;
+        font-weight: 600;
+        margin-bottom: 0.5rem;
+        color: #374151;
+    }
+
+    .summary-value {
+        margin-bottom: 1rem;
+        color: #4b5563;
+    }
+
+    .divider {
+        height: 1px;
+        background-color: #f3f4f6;
+        margin: 1rem 0;
+    }
+
+    .total-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .total-label {
+        font-weight: 600;
+    }
+
+    .total-price {
+        font-size: 1.25rem;
+        font-weight: 700;
+        color: #ec4899;
+    }
+
+    @media (max-width: 768px) {
+        .order-item {
+            grid-template-columns: 1fr;
+            gap: 1rem;
+        }
+        
+        .product-total {
+            text-align: left;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="order-detail-container">
+    <nav aria-label="breadcrumb" class="breadcrumb-nav">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{% url 'products:product_list' %}">Products</a></li>
+            <li class="breadcrumb-item"><a href="{% url 'orders:order_list' %}">My Orders</a></li>
+            <li class="breadcrumb-item active">Order #{{ order.id }}</li>
+        </ol>
+    </nav>
+
+    <div class="row">
+        <!-- Order Items -->
+        <div class="col-lg-8">
+            <div class="order-card">
+                <div class="card-header">
+                    <h3 class="card-title">Order Items</h3>
+                </div>
+                <div class="card-body">
+                    {% for item in order.items.all %}
+                    <div class="order-item">
+                        <img src="{{ item.product.image.url }}" class="product-image" alt="{{ item.product.name }}">
+                        <div>
+                            <h5 class="product-name">{{ item.product.name }}</h5>
+                            <p class="product-meta">Price: ${{ item.price }}</p>
+                            <p class="product-meta">Quantity: {{ item.quantity }}</p>
+                        </div>
+                        <div class="product-total">${{ item.total }}</div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Order Summary -->
+        <div class="col-lg-4">
+            <div class="order-card">
+                <div class="card-header">
+                    <h3 class="card-title">Order Summary</h3>
+                </div>
+                <div class="card-body">
+                    <div class="mb-4">
+                        <h6 class="summary-title">Order Status</h6>
+                        <span class="status-badge status-{{ order.status }}">
+                            {{ order.status|title }}
+                        </span>
+                    </div>
+                    
+                    <div class="mb-4">
+                        <h6 class="summary-title">Order Date</h6>
+                        <p class="summary-value">{{ order.created_at|date:"F j, Y" }}</p>
+                    </div>
+                    
+                    <div class="mb-4">
+                        <h6 class="summary-title">Shipping Address</h6>
+                        <p class="summary-value">{{ order.shipping_address }}</p>
+                    </div>
+                    
+                    <div class="divider"></div>
+                    
+                    <div class="mb-3">
+                        <div class="d-flex justify-content-between">
+                            <span>Subtotal</span>
+                            <span>${{ order.total }}</span>
+                        </div>
+                    </div>
+                    
+                    <div class="divider"></div>
+                    
+                    <div class="total-row">
+                        <span class="total-label">Total</span>
+                        <span class="total-price">${{ order.total }}</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
